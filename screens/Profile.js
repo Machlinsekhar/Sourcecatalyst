@@ -12,13 +12,29 @@ import {
   } from 'react-native';
   import { useNavigation } from '@react-navigation/native';
 import { Image } from 'react-native-elements';
+import { ref, get,child } from "firebase/database";
+import { useContext } from 'react';
+import { AppContext } from '../App';
+
 
   export default function Profile () {
     const navigation = useNavigation();
+    const {db} = useContext(AppContext);
     const [username, setUsername] = useState('');
     const [phone, setPhone] = useState('');
     const [country, setCountry] = useState('');
-    const options = useMemo(() => countryList().getData(), [])
+    const options = useMemo(() => countryList().getData(), []);
+    // const userInfo = GoogleSignin.signIn();
+    
+      // const usersRef = ref(db, 'users');
+      // const userSnapshot = get(child(usersRef, 'userInfo._j.user.photo'));
+      // const userList = [];
+    
+      // if (userSnapshot.exists()) {
+      //   const userData = userSnapshot.val();
+      // }
+    
+    
     function handleUsernameChange(username) {
         setUsername(username);
       }
@@ -33,7 +49,7 @@ import { Image } from 'react-native-elements';
     return (
       <SafeAreaView style={styles.sectionContainer}>
         
-        <Image  style={styles.inputimg} source={require('../assets/web.png')}/>
+        <Image style={styles.inputimg} source={require('../assets/web.png')}/>
          <View style={styles.form}>
           <TextInput
             style={styles.input}
@@ -88,12 +104,11 @@ import { Image } from 'react-native-elements';
             height: 50,
           },
         inputimg:{
-            backgroundColor: '#F2F2F2',
+            // backgroundColor: '#F2F2F2',
             borderRadius: 90,
             width: 160,
             marginBottom: 25,
-            fontSize: 17,
-            paddingHorizontal: 30,
+            // paddingHorizontal: 30,
             height: 150,
         },
           label: {

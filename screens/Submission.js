@@ -27,7 +27,9 @@ export default function Submissions() {
     console.log('Selected rating:', rating);
   };
 
-  const [checked, setChecked] = useState(false);
+  const [checked1, setChecked1] = useState(false);
+  const [checked2, setChecked2] = useState(false);
+  const [checked3, setChecked3] = useState(false);
   
   const tabHeight = slideAnimation.interpolate({
     inputRange: [0, 1],
@@ -58,14 +60,13 @@ export default function Submissions() {
         <View style={styles.tasksub}>
           <Text style={styles.taskno}>Task Outcome Achieved</Text>
           <View style={styles.container}>
-      <CheckBox
-        title="Check me"
-        checked={checked}
-        onPress={() => setChecked(!checked)}
-        containerStyle={styles.checkboxContainer}
+          <CheckBox
+        checked={checked1}
+        onPress={() => setChecked1(!checked1)}
+        // containerStyle={styles.checkboxContainer}
         textStyle={styles.checkboxText}
-        checkedColor="#FF0000" // Set the desired background color when checked
-        size={25} // Set the size of the checkbox
+        checkedColor="#449237" // Set the desired background color when checked
+        size={20} // Set the size of the checkbox
         checkedIcon="square" // Use a square icon when checked
         uncheckedIcon="square" // Use a square icon when unchecked
       />
@@ -75,14 +76,13 @@ export default function Submissions() {
         <View style={styles.tasksub}>
           <Text style={styles.taskno}>Mentor Approval</Text>
           <View style={styles.container}>
-      <CheckBox
-        title="Check me"
-        checked={checked}
-        onPress={() => setChecked(!checked)}
-        containerStyle={styles.checkboxContainer}
+          <CheckBox
+        checked={checked2}
+        onPress={() => setChecked2(!checked2)}
+        // containerStyle={styles.checkboxContainer}
         textStyle={styles.checkboxText}
-        checkedColor="#FF0000" // Set the desired background color when checked
-        size={25} // Set the size of the checkbox
+        checkedColor="#449237" // Set the desired background color when checked
+        size={20} // Set the size of the checkbox
         checkedIcon="square" // Use a square icon when checked
         uncheckedIcon="square" // Use a square icon when unchecked
       />
@@ -92,14 +92,13 @@ export default function Submissions() {
         <View style={styles.tasksub}>
           <Text style={styles.taskno}>Files Checked and Uploaded</Text>
           <View style={styles.container}>
-      <CheckBox
-        title="Check me"
-        checked={checked}
-        onPress={() => setChecked(!checked)}
-        containerStyle={styles.checkboxContainer}
+          <CheckBox
+        checked={checked3}
+        onPress={() => setChecked3(!checked3)}
+        // containerStyle={styles.checkboxContainer}
         textStyle={styles.checkboxText}
         checkedColor="#449237" // Set the desired background color when checked
-        size={25} // Set the size of the checkbox
+        size={20} // Set the size of the checkbox
         checkedIcon="square" // Use a square icon when checked
         uncheckedIcon="square" // Use a square icon when unchecked
       />
@@ -121,6 +120,7 @@ export default function Submissions() {
           unfilledColor="#C9C9C9"
           onFinishRating={handleRatingChange}
         />
+         
       </View>
       <View style={styles.button}>
         <Button title="SUBMIT" color={'#08A82B'} />
@@ -217,9 +217,9 @@ const styles = StyleSheet.create({
     fontSize: 19,
   },
   taskno: {
-    padding: 6,
+    padding: 13,
     fontWeight: '600',
-    // marginTop: 15
+    alignSelf: 'center'
   },
   item: {
     backgroundColor: '#FFFFFF',
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   tasksub: {
     backgroundColor: '#FFFFFF',
     flex: .5,
-    padding: 10,
+    
     marginTop: 10,
     borderRadius: 10,
     flexDirection: 'row',
@@ -313,7 +313,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#EAEAEA', // Set the desired background color
     borderWidth: 0, // Optional: Remove the border
   },
-  checkboxText: {
-    color: '#000000', // Optional: Customize the checkbox text color
-  },
+  
 });

@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F2F1F7',
     // alignItems: 'center',
     justifyContent: 'center',
-    padding: 10,
+    padding: 20,
   },
   profileContainer: {
     margin: 8,

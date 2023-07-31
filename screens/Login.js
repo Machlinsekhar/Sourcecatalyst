@@ -17,7 +17,7 @@ import {
   GoogleSigninButton,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import { doc, setDoc } from "firebase/firestore"; 
+import { ref, set } from "firebase/database";
 import { useContext } from 'react';
 import { AppContext } from '../App';
 
@@ -25,19 +25,19 @@ GoogleSignin.configure();
 
 export default function Login() {
   const navigation = useNavigation();
-  const[email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const userInfo = GoogleSignin.signIn();
   const {db} = useContext(AppContext);
 
   const handleSignUp = async () => {
+    console.log(userInfo)
     try {
       await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      setDoc(doc(db, 'users', userInfo.user.id), {
-        email: userInfo.user.email,
-        name: userInfo.user.name,
-        photo: userInfo.user.photo,
-      })
+      set(ref(db, 'users/' + userInfo._j.user.id), {
+        email: userInfo._j.user.email,
+        name: userInfo._j.user.name,
+        photo: userInfo._j.user.photo,
+      });
+      navigation.navigate('Complete Profile');
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         console.log("Cancelled")
@@ -55,24 +55,12 @@ export default function Login() {
       }
     }
   };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.sectionContainer}>
         <View style={styles.box}>
-          <TextInput
-            placeholder="Email"
-            value={email}
-            style={styles.input}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-          />
-          <TextInput
-            placeholder="Password"
-            value={password}
-            style={styles.input}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+          
         </View>
         <TouchableOpacity style={styles.button} onPress={handleSignUp}>
           <Image

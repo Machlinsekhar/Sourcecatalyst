@@ -12,7 +12,7 @@ import {
     Animated,
     Button,
 } from 'react-native';
-import { SearchBar } from 'react-native-elements';
+
 import { useNavigation } from '@react-navigation/native';
 import { ProgressBar } from 'react-native-paper';
 
@@ -84,7 +84,7 @@ export default function Program() {
                 </TouchableOpacity >
             </View>
             <Animated.View style={[styles.description, { maxHeight: tabHeight }]}>
-                <Text style={styles.destext}>A task detail typically includes a brief description or summary of the task at hand, along with relevant information such as deadlines, priority level, and any specific instructions or requirements. </Text>
+                <Text style={styles.destext}>A task detail typically includes a brief description or summary of the task at hand, along with relevant info. </Text>
             </Animated.View>
             <View style={styles.button}>
                 <View style={{ paddingHorizontal: 10 }}>

@@ -5,7 +5,7 @@ import {
     Text,
     View,
     TouchableOpacity,
-    ImageBackground,
+    Image,
     Alert,
   } from 'react-native';
   import { useNavigation } from '@react-navigation/native';
@@ -43,7 +43,7 @@ import {
     return (
         <SafeAreaView style={styles.sectionContainer}>
         <Text>Source {'\n'}Catalyst</Text>
-    
+        
      </SafeAreaView>
    );
     }
@@ -54,5 +54,13 @@ import {
           backgroundColor: '#ffffff',
           alignItems:'center',
           justifyContent: 'center',
-        }
+        },
+        inputimg:{
+          // backgroundColor: '#F2F2F2',
+          borderRadius: 90,
+          width: 160,
+          marginBottom: 25,
+          // paddingHorizontal: 30,
+          height: 150,
+      },
     });

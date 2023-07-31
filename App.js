@@ -14,15 +14,14 @@ import Submissions from './screens/Submission';
 const Stack = createNativeStackNavigator();
 
 import { initializeApp } from "firebase/app";
-import { getDatabase } from "firebase/database";
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { ref, get,getDatabase,child } from "firebase/database";
 import { createContext, useContext } from 'react';
 
 
 const firebaseConfig = {
   apiKey: "AIzaSyBdWin1i9Z40vlNR5Ox1aWktQ4TMbfVCWo",
   authDomain: "sourcecatalyst-c3bc6.firebaseapp.com",
-  databaseURL: "https://sourcecatalyst-c3bc6-default-rtdb.firebaseio.com",
+  databaseURL: "https://sourcecatalyst-c3bc6-default-rtdb.firebaseio.com/",
   projectId: "sourcecatalyst-c3bc6",
   storageBucket: "sourcecatalyst-c3bc6.appspot.com",
   messagingSenderId: "486349858970",
@@ -31,13 +30,21 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Initialize Realtime Database and get a reference to the service
+const db = getDatabase(app);
 
 // Get a list of cities from your database
 async function getUsers(db) {
-  const usersCol = collection(db, 'users');
-  const userSnapshot = await getDocs(usersCol);
-  const userList = userSnapshot.docs.map(doc => doc.data());
+  const usersRef = ref(db, 'users');
+  const userSnapshot = await get(child(usersRef, '/'));
+  const userList = [];
+
+  if (userSnapshot.exists()) {
+    const userData = userSnapshot.val();
+    for (const key in userData) {
+      userList.push(userData[key]);
+    }
+  }
   console.log(userList)
   return userList;
 }
@@ -47,7 +54,7 @@ export const AppContext = createContext();
 export default function App() {
 
   getUsers(db).then((userList) => {
-    console.log(userList)
+    // console.log(userList)
   })
   return (
     <AppContext.Provider value={{app, db}}>
