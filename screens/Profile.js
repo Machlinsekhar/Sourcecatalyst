@@ -24,16 +24,6 @@ import { AppContext } from '../App';
     const [phone, setPhone] = useState('');
     const [country, setCountry] = useState('');
     const options = useMemo(() => countryList().getData(), []);
-    // const userInfo = GoogleSignin.signIn();
-    
-      // const usersRef = ref(db, 'users');
-      // const userSnapshot = get(child(usersRef, 'userInfo._j.user.photo'));
-      // const userList = [];
-    
-      // if (userSnapshot.exists()) {
-      //   const userData = userSnapshot.val();
-      // }
-    
     
     function handleUsernameChange(username) {
         setUsername(username);

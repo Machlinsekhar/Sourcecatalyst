@@ -20,16 +20,19 @@ import {
 import { ref, set } from "firebase/database";
 import { useContext } from 'react';
 import { AppContext } from '../App';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 GoogleSignin.configure();
 
 export default function Login() {
-  const navigation = useNavigation();
   const userInfo = GoogleSignin.signIn();
+  const navigation = useNavigation();
   const {db} = useContext(AppContext);
 
   const handleSignUp = async () => {
+    
     console.log(userInfo)
+    saveSessionData('userInfo', userInfo._j.user.id);
     try {
       await GoogleSignin.hasPlayServices();
       set(ref(db, 'users/' + userInfo._j.user.id), {
@@ -53,6 +56,16 @@ export default function Login() {
         console.log(error)
         // some other error happened
       }
+    }
+  };
+
+  const saveSessionData = async (key, value) => {
+    console.log(key, value)
+    try {
+      await AsyncStorage.setItem(key, value);
+      console.log('Session data saved successfully.');
+    } catch (error) {
+      console.log('Error saving session data:', error);
     }
   };
 
