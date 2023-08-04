@@ -21,25 +21,41 @@ import { ref, set } from "firebase/database";
 import { useContext } from 'react';
 import { AppContext } from '../App';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getUser } from '../utils';
 
 GoogleSignin.configure();
 
 export default function Login() {
-  const userInfo = GoogleSignin.signIn();
   const navigation = useNavigation();
-  const {db} = useContext(AppContext);
+  const {db, user, setUser} = useContext(AppContext);
+
+  useEffect(() => {
+    if (user) {
+      navigation.navigate('Complete Profile');
+    }
+  }, [user])
 
   const handleSignUp = async () => {
-    
-    console.log(userInfo)
-    saveSessionData('userInfo', userInfo._j.user.id);
+    let userInfo;
+    let currentUser;
     try {
       await GoogleSignin.hasPlayServices();
-      set(ref(db, 'users/' + userInfo._j.user.id), {
-        email: userInfo._j.user.email,
-        name: userInfo._j.user.name,
-        photo: userInfo._j.user.photo,
-      });
+      userInfo = await GoogleSignin.signIn();
+      currentUser = await getUser(db, userInfo.user.id)
+      if (!currentUser) {
+        currentUser = {
+          email: userInfo.user.email,
+          name: userInfo.user.name,
+          photo: userInfo.user.photo,
+        }
+        set(ref(db, 'users/' + userInfo.user.id), currentUser);
+        
+      }
+      setUser((prev) => ({
+        ...currentUser,
+        id: userInfo.user.id
+      }));
+      
       navigation.navigate('Complete Profile');
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {

@@ -12,7 +12,10 @@ import {
     Animated,
     Button,
 } from 'react-native';
-
+import { ref, get, child, update } from "firebase/database";
+import { useContext } from 'react';
+import { AppContext } from '../App';
+import { getSessionData, getUser, getUserList } from '../utils';
 import { useNavigation } from '@react-navigation/native';
 import { ProgressBar } from 'react-native-paper';
 
@@ -20,6 +23,8 @@ export default function Program() {
     const navigation = useNavigation();
     const [isTabOpen, setIsTabOpen] = useState(false);
     const slideAnimation = useState(new Animated.Value(0))[0];
+    const [taskTitle, setTaskTitle] = useState('');
+    const {user} = useContext(AppContext);
 
     const toggleTab = () => {
         const toValue = isTabOpen ? 0 : 1;
@@ -53,14 +58,15 @@ export default function Program() {
     function handlePressSubmit(){
         navigation.navigate('Submissions');
     }
-    const handleSearch = (text) => {
-        // Handle search functionality here
-
-    };
-
-    const separate = () => {
-        return <View style={styles.separate} />;
-    };
+    useEffect(() => {
+        const getTaskTitle = async () => {
+            console.log('user', user)
+            const randomString = 'Hello';
+            setTaskTitle(randomString); // Update the state with the generated string
+          };
+          getTaskTitle();
+    }, [])
+    
 
     return (
         <SafeAreaView style={styles.sectionContainer}>
@@ -78,7 +84,7 @@ export default function Program() {
             <ProgressBar style={styles.progress} progress={0.5} color="#449237" />
 
             <View style={styles.task}>
-                <Text style={styles.day}>Task Title</Text>
+                <Text style={styles.day}>{taskTitle}</Text>
                 <TouchableOpacity onPress={toggleTab}>
                     <Image style={styles.down} source={require('../assets/ellipse.png')} />
                 </TouchableOpacity >

@@ -14,8 +14,11 @@ import Submissions from './screens/Submission';
 const Stack = createNativeStackNavigator();
 
 import { initializeApp } from "firebase/app";
-import { ref, get,getDatabase,child } from "firebase/database";
-import { createContext, useContext } from 'react';
+import { ref, get, getDatabase, child } from "firebase/database";
+import { createContext, useContext, useEffect } from 'react';
+import { getSessionData, getUser } from './utils';
+import { useState } from 'react';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 
 const firebaseConfig = {
@@ -33,82 +36,92 @@ const app = initializeApp(firebaseConfig);
 // Initialize Realtime Database and get a reference to the service
 const db = getDatabase(app);
 
-// Get a list of cities from your database
-async function getUsers(db) {
-  const usersRef = ref(db, 'users');
-  const userSnapshot = await get(child(usersRef, '/'));
-  const userList = [];
-
-  if (userSnapshot.exists()) {
-    const userData = userSnapshot.val();
-    for (const key in userData) {
-      userList.push(userData[key]);
-    }
-  }
-  console.log(userList)
-  return userList;
-}
-
 export const AppContext = createContext();
 
 export default function App() {
+  const [user, setUser] = useState();
 
-  getUsers(db).then((userList) => {
-    // console.log(userList)
-  })
+  useEffect(() => {
+    const loginSilently = async () => {
+      const userInfo = await GoogleSignin.signInSilently();
+      return userInfo;
+    }
+
+    const fetchUser = async (userId) => {
+      // Find the user with the matching userId
+      const user = await getUser(db, userId);
+      if (!user) {
+        console.error('User not found');
+        return;
+      }
+      setUser(() => ({
+        ...user,
+        id: userId
+      }));
+    }
+    loginSilently().then((userInfo) => {
+      fetchUser(userInfo.user.id);
+    }).catch((error) => {
+      if (error.code === statusCodes.SIGN_IN_REQUIRED) {
+        console.error("User must sign in")
+      } else {
+        console.error(error)
+      }
+    })
+  }, [])
   return (
-    <AppContext.Provider value={{app, db}}>
+    <AppContext.Provider value={{ app, db, user, setUser }}>
       <NavigationContainer>
-      <Stack.Navigator>
+        <Stack.Navigator>
 
-        <Stack.Screen
-          name="Splash"
-          component={Splash}
-          options={{ headerShown: false, }} />
+          <Stack.Screen
+            name="Splash"
+            component={Splash}
+            options={{ headerShown: false, }} />
 
-        <Stack.Screen
-          name="Login"
-          component={Login}
-          options={{ headerShown: false }} />
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{ headerShown: false }} />
 
-        <Stack.Screen
-          name="Complete Profile"
-          component={Profile}
-          options={{ headerShadowVisible: false, }}
-        />
+          <Stack.Screen
+            name="Complete Profile"
+            component={Profile}
+            options={{ headerShadowVisible: false, }}
+          />
 
-        <Stack.Screen
-          name="TabNavigation"
-          component={TabNavigation}
-          options={{ headerShown: false, }}
-        />
+          <Stack.Screen
+            name="TabNavigation"
+            component={TabNavigation}
+            options={{ headerShown: false, }}
+          />
 
-        <Stack.Screen
-          name="Program"
-          component={Program}
-          options={{ headerShown: false, }}
-        />
+          <Stack.Screen
+            name="Program"
+            component={Program}
+            options={{ headerShown: false, }}
+          />
 
-<Stack.Screen
-          name="Submissions"
-          component={Submissions}
-          options={{ headerShown: false, }}
-        />
+          <Stack.Screen
+            name="Submissions"
+            component={Submissions}
+            options={{ headerShown: false, }}
+          />
 
-        <Stack.Screen
-          name="Videos"
-          component={Videos}
-          options={{ headerShown: false, }}
-        />
+          <Stack.Screen
+            name="Videos"
+            component={Videos}
+            options={{ headerShown: false, }}
+          />
 
-        <Stack.Screen
-          name="Documents"
-          component={Documents}
-          options={{ headerShown: false, }}
-        />
+          <Stack.Screen
+            name="Documents"
+            component={Documents}
+            options={{ headerShown: false, }}
+          />
 
-      </Stack.Navigator>
-    </NavigationContainer>
+        </Stack.Navigator>
+      </NavigationContainer>
     </AppContext.Provider>
   );
 }

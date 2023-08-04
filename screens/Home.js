@@ -13,29 +13,82 @@ import {
 import { SearchBar } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 import { ProgressBar } from 'react-native-paper';
+import { ref, get, child, update } from "firebase/database";
+import { useContext } from 'react';
+import { AppContext } from '../App';
+import { getSessionData, getUser, getUserList } from '../utils';
 
 export default function Home() {
+
+  const { db } = useContext(AppContext);
+  const {user} = useContext(AppContext)
+  
+  useEffect(() => {
+
+    const fetchImg = async () => {
+        if (user && user.photo) {
+          setImageSource(user.photo)
+          // Now you can use the 'user.photo' in your component's state or UI
+        } else {
+          console.log('User not found or photo not available');
+        }
+    };
+
+    fetchImg();
+
+  }, [])
+
   const navigation = useNavigation();
-  function onSubmit(){
+  function onSubmit() {
     navigation.navigate('Program');
   }
   const handleSearch = (text) => {
     // Handle search functionality here
 
   };
-
-  const domains = [{ id: '1', title: 'Python', image: require('../assets/python.png') },
-  { id: '2', title: 'Web', image: require('../assets/web.png') },
-  { id: '3', title: 'Industrial\nAutomation', image: require('../assets/industrial-automation.png') },
-  { id: '4', title: 'IOT', image: require('../assets/iot.png') }];
+  const [imageSource, setImageSource] = useState('..assets/user.png');
+  const domains = [{ id: 'python', title: 'Python', image: require('../assets/python.png') },
+  { id: 'web', title: 'Web', image: require('../assets/web.png') },
+  { id: 'ia', title: 'Industrial\nAutomation', image: require('../assets/industrial-automation.png') },
+  { id: 'iot', title: 'IOT', image: require('../assets/iot.png') }];
+  
 
   const oneDomain = ({ item }) => (
-    <View style={styles.item}>
-      <View >
-        <Image source={item.image} style={styles.img} />
+    <TouchableOpacity
+      onPress={ () => {
+        
+    Alert.alert(
+      'Selected Course ' + item.title, // Title of the alert dialog
+      'Are you sure you want to continue?', // Message of the alert dialog
+      [
+        { text: 'Confirm', onPress: async() => 
+        
+        {const today = new Date();
+        const date = today.getDate();
+        const month = today.getMonth() + 1;
+        const year = today.getFullYear();
+        const formattedDate = `${date}/${month}/${year}`;
+        const courseId = item.id;
+        const userRef = ref(db, `users/${user.id}/current`);
+        update(userRef, {
+          courseId: courseId,
+          startDate: formattedDate
+    });
+        navigation.navigate('Program')} } // Button with callback function
+      ]
+    );
+      }}
+    >
+
+
+      <View style={styles.item}>
+        <View>
+          <Image source={item.image} style={styles.img} />
+        </View>
+        <Text style={styles.title}>{item.title} </Text>
       </View>
-      <Text style={styles.title}>{item.title} </Text>
-    </View>
+    </TouchableOpacity>
+
   )
 
   headerComponent = () => {
@@ -45,7 +98,12 @@ export default function Home() {
   seperate = () => {
     return <View style={styles.seperate} />
   }
-  
+  const KeyExtractor = (item) => item.id.toString();
+
+  const handlePress = ({ item }) => {
+    // Handle onPress action here, for example, navigate to a new screen
+    console.log(`Pressed: ${item.id}`);
+  };
   return (
     <SafeAreaView style={styles.sectionContainer}>
       <View style={{ flexDirection: 'row' }}>
@@ -58,7 +116,7 @@ export default function Home() {
         />
 
         <View style={styles.profileContainer}>
-          <Image source={require('../assets/web.png')} style={styles.profileImage} />
+          <Image source={{ uri: imageSource }} style={styles.profileImage} />
         </View>
       </View>
       <View style={styles.program}>
@@ -71,9 +129,9 @@ export default function Home() {
           <View style={{ flexDirection: 'row' }}>
             <ProgressBar style={styles.progress} progress={0.5} color="#449237" />
             <TouchableOpacity onPress={onSubmit}>
-            <Image source={require('../assets/subtract.png')} />
+              <Image source={require('../assets/subtract.png')} />
             </TouchableOpacity>
-            
+
           </View>
         </View>
       </View>
@@ -83,7 +141,7 @@ export default function Home() {
         numColumns={2}
         columnWrapperStyle={{ flexWrap: 'wrap' }}
         data={domains}
-        keyExtractor={item => item.title}
+        keyExtractor={KeyExtractor}
         ItemSeparatorComponent={seperate}
         renderItem={oneDomain}
       />
@@ -182,6 +240,5 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: '#D9D9D9',
   },
-
 
 });
